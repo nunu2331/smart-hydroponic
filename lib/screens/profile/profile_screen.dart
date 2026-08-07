@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_hydroponic/auth/auth_service.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
@@ -8,7 +9,10 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = MockData.currentUser;
+    final authUser = AuthService.instance.currentUser;
+    final name = authUser?.name ?? MockData.currentUser.name;
+    final email = authUser?.email ?? MockData.currentUser.email;
+    final photoUrl = authUser?.photoUrl;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -25,18 +29,24 @@ class ProfileScreen extends StatelessWidget {
                   AppCard(
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.account_circle_outlined,
-                          size: 64,
-                          color: AppColors.textSecondary,
-                        ),
+                        if (photoUrl != null && photoUrl.isNotEmpty)
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundImage: NetworkImage(photoUrl),
+                          )
+                        else
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            size: 64,
+                            color: AppColors.textSecondary,
+                          ),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                user.name,
+                                name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -44,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                user.email,
+                                email,
                                 style: const TextStyle(
                                   color: AppColors.textSecondary,
                                   fontSize: 13,
@@ -82,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                user.name,
+                                name,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -122,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                user.email,
+                                email,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smart_hydroponic/mock/mock_data.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:smart_hydroponic/auth/auth_service.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscure = true;
+  bool _googleLoading = false;
 
   @override
   void dispose() {
@@ -31,14 +33,44 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _showAccountPicker() async {
-    final selected = await showDialog<MockUser>(
-      context: context,
-      barrierColor: Colors.black54,
-      builder: (_) => const _GoogleAccountDialog(),
-    );
-    if (selected != null && mounted) {
-      _goToMain();
+  void _loginWithEmail() {
+    AuthService.instance.signInLocally(email: _emailController.text);
+    _goToMain();
+  }
+
+  Future<void> _signInWithGoogle() async {
+    if (_googleLoading) return;
+
+    setState(() => _googleLoading = true);
+    try {
+      final user = await AuthService.instance.signInWithGoogle();
+      if (!mounted) return;
+      if (user != null) {
+        _goToMain();
+      }
+    } on GoogleSignInException catch (error) {
+      if (!mounted) return;
+      final message = switch (error.code) {
+        GoogleSignInExceptionCode.clientConfigurationError =>
+          'Google Sign-In belum dikonfigurasi. Isi AuthConfig / OAuth client ID.',
+        GoogleSignInExceptionCode.interrupted =>
+          'Sign-in terputus. Coba lagi.',
+        GoogleSignInExceptionCode.uiUnavailable =>
+          'UI Google Sign-In tidak tersedia di perangkat ini.',
+        _ => 'Gagal sign-in Google: ${error.description ?? error.code.name}',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal sign-in Google: $error')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _googleLoading = false);
+      }
     }
   }
 
@@ -100,9 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscure,
@@ -162,24 +192,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
-
                   style: ElevatedButton.styleFrom(
-                    // backgroundColor: _loginGreen,
                     foregroundColor: Colors.black,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  onPressed: _goToMain,
+                  onPressed: _loginWithEmail,
                   child: const Text('Login'),
                 ),
                 const SizedBox(height: 22),
-                Row(
+                const Row(
                   children: [
-                    const Expanded(child: Divider(color: AppColors.textPrimary)),
+                    Expanded(child: Divider(color: AppColors.textPrimary)),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
                         'or continue with',
                         style: TextStyle(
@@ -188,122 +216,40 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const Expanded(child: Divider(color: AppColors.textPrimary)),
+                    Expanded(child: Divider(color: AppColors.textPrimary)),
                   ],
                 ),
                 const SizedBox(height: 22),
                 OutlinedButton(
-                  onPressed: _showAccountPicker,
+                  onPressed: _googleLoading ? null : _signInWithGoogle,
                   style: OutlinedButton.styleFrom(
                     backgroundColor: AppColors.white,
                     foregroundColor: AppColors.textPrimary,
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GoogleMark(size: 20),
-                      SizedBox(width: 10),
-                      Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          ),
-                      ),
-                    ],
-                  ),
+                  child: _googleLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GoogleMark(size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Sign in with Google',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GoogleAccountDialog extends StatelessWidget {
-  const _GoogleAccountDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const GoogleMark(size: 36),
-            const SizedBox(height: 16),
-            const Text(
-              'Pilih akun',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'untuk melanjutkan ke Smart Hydroponic',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...MockData.googleAccounts.map((account) {
-              return Column(
-                children: [
-                  const Divider(height: 1),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(
-                      backgroundColor: Color(account.avatarColor),
-                      child: Text(
-                        account.initial,
-                        style: const TextStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      account.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    subtitle: Text(
-                      account.email,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    onTap: () => Navigator.of(context).pop(account),
-                  ),
-                ],
-              );
-            }),
-            const Divider(height: 1),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const CircleAvatar(
-                backgroundColor: AppColors.card,
-                child: Icon(Icons.person_add_alt_1, color: AppColors.textPrimary),
-              ),
-              title: const Text(
-                'Tambah akun lain',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              onTap: () => Navigator.of(context).pop(MockData.currentUser),
-            ),
-          ],
         ),
       ),
     );

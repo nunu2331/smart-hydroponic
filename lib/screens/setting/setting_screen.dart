@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_hydroponic/auth/auth_service.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
@@ -6,7 +7,9 @@ import 'package:smart_hydroponic/widgets/common_widgets.dart';
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
 
-  void _logout(BuildContext context) {
+  Future<void> _logout(BuildContext context) async {
+    await AuthService.instance.signOut();
+    if (!context.mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(
       AppRoutes.welcome,
       (route) => false,
