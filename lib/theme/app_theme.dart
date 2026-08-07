@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
 
 abstract final class AppTheme {
@@ -12,7 +13,8 @@ abstract final class AppTheme {
         surface: AppColors.background,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      fontFamily: null,
+      textTheme: GoogleFonts.poppinsTextTheme(),
+      fontFamily: GoogleFonts.poppins().fontFamily,
     );
 
     return base.copyWith(

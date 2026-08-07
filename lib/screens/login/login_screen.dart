@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF1F5F9),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -56,30 +57,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Welcome Back',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Color(0xFF3498DB),
                     decorationThickness: 3,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 20),
                 const Text(
                   'Sign in to your account',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 12,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 36),
+                const SizedBox(height: 50),
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Enter your email',
-                    prefixIcon: Icon(Icons.email_outlined),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_email.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -88,13 +94,34 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_lock.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
                     suffixIcon: IconButton(
                       onPressed: () => setState(() => _obscure = !_obscure),
-                      icon: Icon(
-                        _obscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                      icon: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/ic_mata.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                          if (!_obscure)
+                            Transform.rotate(
+                              angle: -0.785398,
+                              child: Container(
+                                width: 26,
+                                height: 1.5,
+                                color: const Color(0xFF16A34A),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
