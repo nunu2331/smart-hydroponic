@@ -174,24 +174,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _goToMain,
                   child: const Text('Login'),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
                 Row(
                   children: [
-                    const Expanded(child: Divider(color: AppColors.border)),
+                    const Expanded(child: Divider(color: AppColors.textPrimary)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
                         'or continue with',
                         style: TextStyle(
-                          color: AppColors.textSecondary.withValues(alpha: 0.9),
-                          fontSize: 13,
+                          color: AppColors.textPrimary,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    const Expanded(child: Divider(color: AppColors.border)),
+                    const Expanded(child: Divider(color: AppColors.textPrimary)),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
                 OutlinedButton(
                   onPressed: _showAccountPicker,
                   style: OutlinedButton.styleFrom(
@@ -205,7 +205,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(width: 10),
                       Text(
                         'Sign in with Google',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          ),
                       ),
                     ],
                   ),
