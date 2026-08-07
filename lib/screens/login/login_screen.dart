@@ -78,8 +78,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
+                    hintStyle: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    prefixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       child: SvgPicture.asset(
                         'assets/icons/ic_email.svg',
                         width: 24,
@@ -88,46 +100,77 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: 20),
+
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscure,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
+                    hintStyle: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
+                    prefixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: 0,
+                    ),
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       child: SvgPicture.asset(
                         'assets/icons/ic_lock.svg',
                         width: 24,
                         height: 24,
                       ),
                     ),
-                    suffixIcon: IconButton(
-                      onPressed: () => setState(() => _obscure = !_obscure),
-                      icon: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/ic_mata.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                          if (!_obscure)
-                            Transform.rotate(
-                              angle: -0.785398,
-                              child: Container(
-                                width: 26,
-                                height: 1.5,
-                                color: const Color(0xFF16A34A),
-                              ),
+                    suffixIcon: GestureDetector(
+                      onTap: () => setState(() => _obscure = !_obscure),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/ic_mata.svg',
+                              width: 24,
+                              height: 24,
                             ),
-                        ],
+                            if (!_obscure)
+                              Transform.rotate(
+                                angle: -0.785398,
+                                child: Container(
+                                  width: 26,
+                                  height: 1.5,
+                                  color: const Color(0xFF16A34A),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 25),
                 ElevatedButton(
+
+                  style: ElevatedButton.styleFrom(
+                    // backgroundColor: _loginGreen,
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                  ),
                   onPressed: _goToMain,
                   child: const Text('Login'),
                 ),
