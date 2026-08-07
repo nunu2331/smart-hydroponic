@@ -31,8 +31,10 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
+          backgroundColor: AppColors.btnPrimary,
+          foregroundColor: AppColors.secondary4,
+          disabledBackgroundColor: AppColors.btnDisable,
+          disabledForegroundColor: AppColors.secondary4,
           elevation: 0,
           minimumSize: const Size(double.infinity, 52),
           shape: RoundedRectangleBorder(
@@ -60,7 +62,7 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: AppColors.secondary4,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 16,
@@ -75,7 +77,7 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(color: AppColors.primaryDark, width: 2),
+          borderSide: const BorderSide(color: AppColors.btnHover, width: 2),
         ),
         hintStyle: const TextStyle(color: AppColors.textSecondary),
         prefixIconColor: AppColors.primary,
