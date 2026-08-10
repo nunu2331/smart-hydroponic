@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
+import 'package:smart_hydroponic/theme/app_fonts.dart';
 
 abstract final class AppTheme {
   static ThemeData get light {
@@ -13,8 +14,9 @@ abstract final class AppTheme {
         surface: AppColors.background,
       ),
       scaffoldBackgroundColor: AppColors.background,
+      // Default family = Poppins. Use AppFonts.inter(...) where Figma says Inter.
       textTheme: GoogleFonts.poppinsTextTheme(),
-      fontFamily: GoogleFonts.poppins().fontFamily,
+      fontFamily: AppFonts.poppinsFamily,
     );
 
     return base.copyWith(
