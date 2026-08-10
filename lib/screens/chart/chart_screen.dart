@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
+import 'package:smart_hydroponic/theme/app_fonts.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
 
 class ChartScreen extends StatefulWidget {
@@ -30,17 +32,10 @@ class _ChartScreenState extends State<ChartScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Chart',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    Text(
                       'Monitoring Chart',
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -54,38 +49,40 @@ class _ChartScreenState extends State<ChartScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _ParamChip(
-                  label: 'Water pH',
-                  icon: Icons.water_drop,
-                  color: AppColors.phBlue,
-                  selected: _selectedParam == 0,
-                  onTap: () => setState(() => _selectedParam = 0),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _ParamChip(
+                    label: 'Water pH',
+                    iconAsset: 'assets/icons/ic_water.svg',
+                    selected: _selectedParam == 0,
+                    onTap: () => setState(() => _selectedParam = 0),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ParamChip(
-                  label: 'Water TDS',
-                  icon: Icons.graphic_eq,
-                  color: AppColors.tdsPurple,
-                  selected: _selectedParam == 1,
-                  onTap: () => setState(() => _selectedParam = 1),
+                Expanded(
+                  child: _ParamChip(
+                    label: 'Water TDS',
+                    iconAsset: 'assets/icons/ic_tds.svg',
+                    selected: _selectedParam == 1,
+                    onTap: () => setState(() => _selectedParam = 1),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _ParamChip(
-                  label: 'UV Light',
-                  icon: Icons.wb_sunny,
-                  color: AppColors.uvOrange,
-                  selected: _selectedParam == 2,
-                  onTap: () => setState(() => _selectedParam = 2),
+                Expanded(
+                  child: _ParamChip(
+                    label: 'UV Light',
+                    iconAsset: 'assets/icons/ic_uv.svg',
+                    selected: _selectedParam == 2,
+                    onTap: () => setState(() => _selectedParam = 2),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 24),
           const SectionTitle('Temperature Chart (°c)'),
@@ -138,38 +135,51 @@ class _ChartScreenState extends State<ChartScreen> {
 class _ParamChip extends StatelessWidget {
   const _ParamChip({
     required this.label,
-    required this.icon,
-    required this.color,
+    required this.iconAsset,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
-  final IconData icon;
-  final Color color;
+  final String iconAsset;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? color.withValues(alpha: 0.18) : AppColors.card,
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: Column(
+        borderRadius: BorderRadius.circular(30),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: selected ? const EdgeInsets.all(4) : EdgeInsets.zero,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.primary4 : Colors.transparent,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: color, size: 22),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+              SvgPicture.asset(
+                iconAsset,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
             ],
