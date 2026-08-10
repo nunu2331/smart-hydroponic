@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
@@ -24,15 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              const LeafLogo(size: 36),
-              const SizedBox(width: 10),
+              const LeafLogo(size: 60),
+              const SizedBox(width: 2),
               const Expanded(
                 child: Text(
                   'Smart\nHydroponic',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    height: 1.15,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -46,15 +46,19 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 16),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
             decoration: BoxDecoration(
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
               children: [
-                const Icon(Icons.wifi, color: AppColors.white),
-                const SizedBox(width: 12),
+                SvgPicture.asset(
+                  'assets/icons/ic_wifi.svg',
+                  width: 30,
+                  height: 30,
+                ),
+                const SizedBox(width: 10),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         'System Status',
                         style: TextStyle(
                           color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
                       Text(
@@ -79,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -87,51 +91,60 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Text(
                     'Online',
                     style: TextStyle(
-                      color: AppColors.primaryDark,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 10,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          const SectionTitle('Monitoring Real Time'),
-          const SizedBox(height: 12),
+          const SizedBox(height: 30),
+          const Text(
+            'Monitoring Real Time',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 20),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: _MetricCard(
-                  icon: Icons.water_drop,
-                  iconBg: AppColors.phBlue,
-                  label: 'Water pH',
-                  value: MockData.ph,
+              _MetricCard(
+                icon: SvgPicture.asset(
+                  'assets/icons/ic_water.svg',
+                  width: 40,
+                  height: 40,
                 ),
+                label: 'Water pH',
+                value: MockData.ph,
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MetricCard(
-                  icon: Icons.graphic_eq,
-                  iconBg: AppColors.tdsPurple,
-                  label: 'Water TDS',
-                  value: MockData.tds,
+              _MetricCard(
+                icon: SvgPicture.asset(
+                  'assets/icons/ic_tds.svg',
+                  width: 40,
+                  height: 40,
                 ),
+                label: 'Water TDS',
+                value: MockData.tds,
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MetricCard(
-                  icon: Icons.wb_sunny,
-                  iconBg: AppColors.uvOrange,
-                  label: 'UV Light',
-                  value: MockData.uv,
+              _MetricCard(
+                icon: SvgPicture.asset(
+                  'assets/icons/ic_uv.svg',
+                  width: 40,
+                  height: 40,
                 ),
+                label: 'UV Light',
+                value: MockData.uv,
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 30),
           const SectionTitle('Pump Control'),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
@@ -190,39 +203,46 @@ class _HomeScreenState extends State<HomeScreen> {
 class _MetricCard extends StatelessWidget {
   const _MetricCard({
     required this.icon,
-    required this.iconBg,
     required this.label,
     required this.value,
   });
 
-  final IconData icon;
-  final Color iconBg;
+  final Widget icon;
   final String label;
   final String value;
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+    return Container(
+      width: 110,
+      height: 150,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            backgroundColor: iconBg,
-            child: Icon(icon, color: AppColors.white, size: 20),
-          ),
+          icon,
           const SizedBox(height: 10),
           Text(
             label,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 14),
           Text(
             value,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -256,10 +276,19 @@ class _PumpCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                radius: 16,
-                backgroundColor: AppColors.primary,
-                child: Icon(Icons.water, color: AppColors.white, size: 16),
+              Container(
+                width: 40,
+                height: 40,
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: SvgPicture.asset(
+                  'assets/icons/ic_pump.svg',
+                  width: 20,
+                  height: 20,
+                ),
               ),
               const Spacer(),
               Switch(value: enabled, onChanged: onChanged),

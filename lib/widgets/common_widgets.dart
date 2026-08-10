@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
 
 class AppBackHeader extends StatelessWidget {
@@ -88,18 +89,12 @@ class ProfileAvatarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
-      icon: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.primary, width: 2),
-        ),
-        child: const Icon(
-          Icons.person_outline,
-          color: AppColors.primary,
-          size: 22,
-        ),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+      icon: SvgPicture.asset(
+        'assets/icons/ic_profile.svg',
+        width: 36,
+        height: 36,
       ),
     );
   }
@@ -112,10 +107,11 @@ class LeafLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
-      Icons.eco,
-      size: size,
-      color: AppColors.primary,
+    return Image.asset(
+      'assets/icons/ic_leaf.png',
+      width: size,
+      height: size,
+      filterQuality: FilterQuality.high,
     );
   }
 }
@@ -127,51 +123,12 @@ class GoogleMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SvgPicture.asset(
+      'assets/icons/ic_google.svg',
       width: size,
       height: size,
-      child: CustomPaint(painter: _GoogleGPainter()),
     );
   }
-}
-
-class _GoogleGPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.18
-      ..strokeCap = StrokeCap.round;
-
-    final rect = Rect.fromLTWH(
-      size.width * 0.1,
-      size.height * 0.1,
-      size.width * 0.8,
-      size.height * 0.8,
-    );
-
-    paint.color = const Color(0xFF4285F4);
-    canvas.drawArc(rect, -0.4, 1.6, false, paint);
-    paint.color = const Color(0xFF34A853);
-    canvas.drawArc(rect, 1.2, 1.2, false, paint);
-    paint.color = const Color(0xFFFBBC05);
-    canvas.drawArc(rect, 2.4, 0.9, false, paint);
-    paint.color = const Color(0xFFEA4335);
-    canvas.drawArc(rect, 3.3, 1.0, false, paint);
-
-    final bar = Paint()
-      ..color = const Color(0xFF4285F4)
-      ..strokeWidth = size.width * 0.18
-      ..strokeCap = StrokeCap.butt;
-    canvas.drawLine(
-      Offset(size.width * 0.5, size.height * 0.5),
-      Offset(size.width * 0.9, size.height * 0.5),
-      bar,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class SectionTitle extends StatelessWidget {
@@ -184,8 +141,8 @@ class SectionTitle extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
     );
