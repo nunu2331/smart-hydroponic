@@ -167,26 +167,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 30),
           const SectionTitle('System Status'),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           AppCard(
             child: Column(
+              spacing: 15,
               children: const [
                 _StatusRow(label: 'Sensor', value: 'Normal', ok: true),
-                Divider(height: 20),
                 _StatusRow(
                   label: 'Nutrition Circulation',
                   value: 'Running',
                   ok: true,
                 ),
-                Divider(height: 20),
                 _StatusRow(
                   label: 'Water Circulation',
                   value: 'Stopped',
                   ok: false,
                 ),
-                Divider(height: 20),
                 _StatusRow(
                   label: 'Inter Connection',
                   value: 'Online',
@@ -345,12 +343,17 @@ class _StatusRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: AppColors.textPrimary),
+            style: AppFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
         Text(
           value,
-          style: TextStyle(
+          style: AppFonts.inter(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: ok ? AppColors.primaryDark : AppColors.danger,
           ),
