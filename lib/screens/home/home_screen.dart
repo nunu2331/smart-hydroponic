@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/routes/app_routes.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
+import 'package:smart_hydroponic/theme/app_fonts.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -231,19 +232,19 @@ class _MetricCard extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
+            style: AppFonts.inter(
+              fontSize: 11,
               fontWeight: FontWeight.w400,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Text(
             value,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: AppFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -297,24 +298,27 @@ class _PumpCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(
+            style: AppFonts.inter(
               fontWeight: FontWeight.bold,
-              fontSize: 13,
+              fontSize: 12,
+              color: AppColors.textPrimary,
             ),
           ),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: AppFonts.inter(
               fontSize: 11,
+              fontWeight: FontWeight.w400,
               color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             enabled ? 'ON' : 'OFF',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: enabled ? AppColors.primaryDark : AppColors.danger,
+            style: AppFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
             ),
           ),
         ],
