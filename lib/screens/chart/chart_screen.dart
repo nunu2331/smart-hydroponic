@@ -202,17 +202,19 @@ class _StatCell extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSecondary,
+          style: AppFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 16,
+          style: AppFonts.inter(
+            fontSize: 14,
             fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -225,25 +227,14 @@ class _HistoryRow extends StatelessWidget {
 
   final MockHistoryItem item;
 
-  IconData get _icon {
+  String get _iconAsset {
     switch (item.label) {
       case 'Water TDS':
-        return Icons.graphic_eq;
+        return 'assets/icons/ic_tds.svg';
       case 'UV Light':
-        return Icons.wb_sunny;
+        return 'assets/icons/ic_uv.svg';
       default:
-        return Icons.water_drop;
-    }
-  }
-
-  Color get _color {
-    switch (item.label) {
-      case 'Water TDS':
-        return AppColors.tdsPurple;
-      case 'UV Light':
-        return AppColors.uvOrange;
-      default:
-        return AppColors.phBlue;
+        return 'assets/icons/ic_water.svg';
     }
   }
 
@@ -251,10 +242,10 @@ class _HistoryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 16,
-          backgroundColor: _color,
-          child: Icon(_icon, color: AppColors.white, size: 16),
+        SvgPicture.asset(
+          _iconAsset,
+          width: 34,
+          height: 34,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -263,21 +254,37 @@ class _HistoryRow extends StatelessWidget {
             children: [
               Text(
                 item.label,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Text(
-                item.timestamp,
-                style: const TextStyle(
+                style: AppFonts.inter(
                   fontSize: 11,
-                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
           ),
         ),
-        Text(
-          item.value,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              item.value,
+
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            Text(
+              item.timestamp,
+              
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
         ),
       ],
     );
