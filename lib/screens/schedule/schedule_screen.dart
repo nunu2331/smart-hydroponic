@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
+import 'package:smart_hydroponic/theme/app_fonts.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -73,17 +75,28 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppBackHeader(title: 'Pump Schedule'),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const AppBackHeader(
+                title: 'Pump Schedule',
+                padding: EdgeInsets.zero,
+              ),
+              const SizedBox(height: 30),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
                   for (var i = 0; i < _schedules.length; i++) ...[
                     AppCard(
                       onTap: () => _openUpdateDialog(i),
+                      color: AppColors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 14,
+                      ),
                       child: Row(
                         children: [
                           Expanded(
@@ -92,42 +105,73 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               children: [
                                 Text(
                                   _schedules[i].name,
-                                  style: const TextStyle(
+                                  style: AppFonts.inter(
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
                                 Text(
                                   '${_schedules[i].startTime} - ${_schedules[i].endTime}',
-                                  style: const TextStyle(
+                                  style: AppFonts.inter(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w400,
                                     color: AppColors.textSecondary,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Switch(
-                            value: _schedules[i].enabled,
-                            onChanged: (v) {
-                              setState(() => _schedules[i].enabled = v);
-                            },
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Switch(
+                                value: _schedules[i].enabled,
+                                onChanged: (v) {
+                                  setState(() => _schedules[i].enabled = v);
+                                },
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 15),
                   ],
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 15),
                   OutlinedButton.icon(
                     onPressed: _openAddDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Schedule'),
+                    icon: SvgPicture.asset(
+                      'assets/icons/ic_plus.svg',
+                      width: 14,
+                      height: 14,
+                    ),
+                    label: Text(
+                      'Add Schedule',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      textStyle: AppFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -229,11 +273,13 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 6),
+
             Text(
               widget.title,
               style: const TextStyle(
@@ -241,12 +287,16 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            const SizedBox(height: 26),
+            Text(
               'Schedule Name',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: AppFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 18),
             DropdownButtonFormField<String>(
               initialValue: _name,
               decoration: _fieldDecoration(),

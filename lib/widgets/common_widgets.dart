@@ -33,7 +33,7 @@ class AppBackHeader extends StatelessWidget {
               height: 24,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Flexible(
             child: Text(
               title,
