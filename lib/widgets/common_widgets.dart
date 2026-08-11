@@ -8,28 +8,38 @@ class AppBackHeader extends StatelessWidget {
     required this.title,
     this.onBack,
     this.underline = false,
+    this.padding = const EdgeInsets.fromLTRB(8, 8, 16, 8),
   });
 
   final String title;
   final VoidCallback? onBack;
   final bool underline;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+      padding: padding,
       child: Row(
         children: [
           IconButton(
             onPressed: onBack ?? () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+            visualDensity: VisualDensity.compact,
+            icon: SvgPicture.asset(
+              'assets/icons/ic_arrow.svg',
+              width: 24,
+              height: 24,
+            ),
           ),
+          const SizedBox(width: 8),
           Flexible(
             child: Text(
               title,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
                 decoration: underline ? TextDecoration.underline : null,
                 decorationThickness: 2,
