@@ -228,7 +228,8 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
     return InputDecoration(
       filled: true,
       fillColor: AppColors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.border),
@@ -270,6 +271,7 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
@@ -282,48 +284,93 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
 
             Text(
               widget.title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 26),
-            Text(
-              'Schedule Name',
               style: AppFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
+            const SizedBox(height: 26),
+            Text(
+              'Schedule Name',
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+            ),
             const SizedBox(height: 18),
             DropdownButtonFormField<String>(
               initialValue: _name,
+              isDense: true,
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
               decoration: _fieldDecoration(),
+              dropdownColor: AppColors.white,
+              icon: SvgPicture.asset(
+                'assets/icons/ic_arrow_down.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.textPrimary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              iconEnabledColor: AppColors.textPrimary,
+              iconDisabledColor: AppColors.textPrimary,
+              focusColor: Colors.transparent,
               items: MockData.pumpNames
                   .map(
-                    (name) => DropdownMenuItem(value: name, child: Text(name)),
+                    (name) => DropdownMenuItem(
+                      value: name,
+                      child: Text(
+                        name,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
                   )
                   .toList(),
               onChanged: (value) {
                 if (value != null) setState(() => _name = value);
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 18),
             Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Start Time',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 17),
                       TextField(
                         controller: _startController,
-                        decoration: _fieldDecoration(),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: _fieldDecoration().copyWith(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 7,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -333,14 +380,29 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'End Time',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 17),
                       TextField(
                         controller: _endController,
-                        decoration: _fieldDecoration(),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: _fieldDecoration().copyWith(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 7,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -351,30 +413,95 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: _secondary,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border),
-                      minimumSize: const Size(0, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(widget.secondaryLabel),
-                  ),
+                  child: widget.isUpdate
+                      ? ElevatedButton(
+                          onPressed: _secondary,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.danger,
+                            foregroundColor: AppColors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7.83,
+                              vertical: 10,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            textStyle: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            widget.secondaryLabel,
+                            style: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        )
+                      : OutlinedButton(
+                          onPressed: _secondary,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.textPrimary,
+                            side: const BorderSide(color: AppColors.border),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7.83,
+                              vertical: 10,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            textStyle: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            widget.secondaryLabel,
+                            style: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7.83,
+                        vertical: 10,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(widget.confirmLabel),
+                    child: Text(
+                      widget.confirmLabel,
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
