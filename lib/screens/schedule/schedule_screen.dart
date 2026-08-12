@@ -60,14 +60,22 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         ),
       ),
     );
-    if (result == null) return;
-    setState(() {
-      if (result.delete) {
-        _schedules.removeAt(index);
-      } else if (result.schedule != null) {
-        _schedules[index] = result.schedule!;
+    if (result == null || !mounted) return;
+
+    if (result.delete) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => const _DeleteConfirmDialog(),
+      );
+      if (confirmed == true && mounted) {
+        setState(() => _schedules.removeAt(index));
       }
-    });
+      return;
+    }
+
+    if (result.schedule != null) {
+      setState(() => _schedules[index] = result.schedule!);
+    }
   }
 
   @override
@@ -183,6 +191,95 @@ class _ScheduleFormResult {
 
   final MockSchedule? schedule;
   final bool delete;
+}
+
+class _DeleteConfirmDialog extends StatelessWidget {
+  const _DeleteConfirmDialog();
+
+  static const _btnPadding = EdgeInsets.symmetric(
+    horizontal: 7.83,
+    vertical: 10,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Are you sure want to delete?',
+              textAlign: TextAlign.center,
+              style: AppFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      backgroundColor: AppColors.white,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: _btnPadding,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'No',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.danger,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      padding: _btnPadding,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'Yes',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ScheduleFormDialog extends StatefulWidget {
