@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_hydroponic/mock/mock_data.dart';
 import 'package:smart_hydroponic/theme/app_colors.dart';
+import 'package:smart_hydroponic/theme/app_fonts.dart';
 import 'package:smart_hydroponic/widgets/common_widgets.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -58,14 +60,22 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         ),
       ),
     );
-    if (result == null) return;
-    setState(() {
-      if (result.delete) {
-        _schedules.removeAt(index);
-      } else if (result.schedule != null) {
-        _schedules[index] = result.schedule!;
+    if (result == null || !mounted) return;
+
+    if (result.delete) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => const _DeleteConfirmDialog(),
+      );
+      if (confirmed == true && mounted) {
+        setState(() => _schedules.removeAt(index));
       }
-    });
+      return;
+    }
+
+    if (result.schedule != null) {
+      setState(() => _schedules[index] = result.schedule!);
+    }
   }
 
   @override
@@ -73,17 +83,28 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppBackHeader(title: 'Pump Schedule'),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const AppBackHeader(
+                title: 'Pump Schedule',
+                padding: EdgeInsets.zero,
+              ),
+              const SizedBox(height: 30),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
                   for (var i = 0; i < _schedules.length; i++) ...[
                     AppCard(
                       onTap: () => _openUpdateDialog(i),
+                      color: AppColors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 14,
+                      ),
                       child: Row(
                         children: [
                           Expanded(
@@ -92,42 +113,73 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               children: [
                                 Text(
                                   _schedules[i].name,
-                                  style: const TextStyle(
+                                  style: AppFonts.inter(
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
                                 Text(
                                   '${_schedules[i].startTime} - ${_schedules[i].endTime}',
-                                  style: const TextStyle(
+                                  style: AppFonts.inter(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w400,
                                     color: AppColors.textSecondary,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Switch(
-                            value: _schedules[i].enabled,
-                            onChanged: (v) {
-                              setState(() => _schedules[i].enabled = v);
-                            },
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Switch(
+                                value: _schedules[i].enabled,
+                                onChanged: (v) {
+                                  setState(() => _schedules[i].enabled = v);
+                                },
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 15),
                   ],
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 15),
                   OutlinedButton.icon(
                     onPressed: _openAddDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Schedule'),
+                    icon: SvgPicture.asset(
+                      'assets/icons/ic_plus.svg',
+                      width: 14,
+                      height: 14,
+                    ),
+                    label: Text(
+                      'Add Schedule',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      textStyle: AppFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ],
+          ),
         ),
       ),
     );
@@ -139,6 +191,95 @@ class _ScheduleFormResult {
 
   final MockSchedule? schedule;
   final bool delete;
+}
+
+class _DeleteConfirmDialog extends StatelessWidget {
+  const _DeleteConfirmDialog();
+
+  static const _btnPadding = EdgeInsets.symmetric(
+    horizontal: 7.83,
+    vertical: 10,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Are you sure want to delete?',
+              textAlign: TextAlign.center,
+              style: AppFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      backgroundColor: AppColors.white,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: _btnPadding,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'No',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.danger,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      padding: _btnPadding,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'Yes',
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ScheduleFormDialog extends StatefulWidget {
@@ -184,7 +325,8 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
     return InputDecoration(
       filled: true,
       fillColor: AppColors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.border),
@@ -226,54 +368,106 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 6),
+
             Text(
               widget.title,
-              style: const TextStyle(
-                fontSize: 18,
+              style: AppFonts.inter(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            const SizedBox(height: 26),
+            Text(
               'Schedule Name',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 18),
             DropdownButtonFormField<String>(
               initialValue: _name,
+              isDense: true,
+              style: AppFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
               decoration: _fieldDecoration(),
+              dropdownColor: AppColors.white,
+              icon: SvgPicture.asset(
+                'assets/icons/ic_arrow_down.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.textPrimary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              iconEnabledColor: AppColors.textPrimary,
+              iconDisabledColor: AppColors.textPrimary,
+              focusColor: Colors.transparent,
               items: MockData.pumpNames
                   .map(
-                    (name) => DropdownMenuItem(value: name, child: Text(name)),
+                    (name) => DropdownMenuItem(
+                      value: name,
+                      child: Text(
+                        name,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
                   )
                   .toList(),
               onChanged: (value) {
                 if (value != null) setState(() => _name = value);
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 18),
             Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Start Time',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 17),
                       TextField(
                         controller: _startController,
-                        decoration: _fieldDecoration(),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: _fieldDecoration().copyWith(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 7,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -283,14 +477,29 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'End Time',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 17),
                       TextField(
                         controller: _endController,
-                        decoration: _fieldDecoration(),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: _fieldDecoration().copyWith(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 7,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -301,30 +510,95 @@ class _ScheduleFormDialogState extends State<_ScheduleFormDialog> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: _secondary,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border),
-                      minimumSize: const Size(0, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(widget.secondaryLabel),
-                  ),
+                  child: widget.isUpdate
+                      ? ElevatedButton(
+                          onPressed: _secondary,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.danger,
+                            foregroundColor: AppColors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7.83,
+                              vertical: 10,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            textStyle: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            widget.secondaryLabel,
+                            style: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        )
+                      : OutlinedButton(
+                          onPressed: _secondary,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.textPrimary,
+                            side: const BorderSide(color: AppColors.border),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7.83,
+                              vertical: 10,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            textStyle: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            widget.secondaryLabel,
+                            style: AppFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7.83,
+                        vertical: 10,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      textStyle: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(widget.confirmLabel),
+                    child: Text(
+                      widget.confirmLabel,
+                      style: AppFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
